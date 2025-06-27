@@ -101,6 +101,61 @@ body {
   margin: 10px 0;
 }
 
+#confirm {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  text-align: center;
+  width: 300px;
+  display: none; /* Show it with JS when needed */
+  font-family: sans-serif;
+}
+
+#confirm p {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 1rem;
+}
+
+#confirm button {
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#yes {
+  background-color: #e74c3c;
+  color: white;
+}
+
+#yes:hover {
+  background-color: #c0392b;
+}
+
+#no {
+  background-color: #bdc3c7;
+  color: #333;
+}
+
+#no:hover {
+  background-color: #95a5a6;
+}
+
+
 @media (min-width: 768px) {
   #dessert-card-container {
     flex-direction: row;

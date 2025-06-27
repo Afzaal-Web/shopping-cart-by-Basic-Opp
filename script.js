@@ -12,6 +12,10 @@ const cartTaxes = document.getElementById('taxes');
 const cartTotal = document.getElementById('total');
 // get show hide carts 
 const showHideCartSpan = document.getElementById('show-hide-cart');
+// get confirm div and buttons
+const confirmDiv = document.getElementById('confirm');
+const yesButton = document.getElementById('yes');
+const noButton = document.getElementById('no');
 
 let isCartShowing = false;
 
@@ -104,6 +108,7 @@ products.forEach(
         `;
     }
 );
+
 /* 
 TODO: class methods and instance methods.
 
@@ -127,7 +132,7 @@ class ShoppingCart { //Defining a class (blueprint) to make shopping cart object
         this.taxRate = 8.25; //Sets the default tax rate to 8.25%
     }
 
-    addItem(id, products){ // Method to add products in cart
+    addItem(id, products) { // Method to add products in cart
         const product = products.find((item) => item.id === id); // find the product user wants to add
         const { name, price } = product; // destructuring to extract from product
         this.items.push(product); // push product to array
@@ -139,10 +144,10 @@ class ShoppingCart { //Defining a class (blueprint) to make shopping cart object
 
         // update the display with the new product the user added. 
         const currentProductCount = totalCountPerProduct[product.id];
-       const currentProductCountSpan = document.getElementById(`product-count-for-id${id}`);
+        const currentProductCountSpan = document.getElementById(`product-count-for-id${id}`);
 
-       currentProductCount > 1 ? currentProductCountSpan.textContent = `${currentProductCount}x`  :
-        productsContainer.innerHTML += `
+        currentProductCount > 1 ? currentProductCountSpan.textContent = `${currentProductCount}x` :
+            productsContainer.innerHTML += `
        <div class="product" id= "dessert${id}">
           <p><span class="product-count" id ="product-count-for-id${id}"></span>${name}</p>
        <p >${price}</p>
@@ -151,15 +156,57 @@ class ShoppingCart { //Defining a class (blueprint) to make shopping cart object
     }
 
     getCounts() {
-    return this.items.length;
+        return this.items.length;
+    }
+
+    calculateTotal() {
+        const subTotal = this.items.reduce((total, item) => total + item.price, 0);
+        const tax = this.calculateTaxes(subTotal);
+        this.total = subTotal + tax;
+        cartSubTotal.textContent = `$${subTotal.toFixed(2)}`;
+        cartTaxes.textContent = `$${tax.toFixed(2)}`;
+        cartTotal.textContent = `$${this.total.toFixed(2)}`;
+        return this.total;
+    }
+    calculateTaxes(amount) {
+        return parseFloat(((this.taxRate / 100) * amount).toFixed(2));
+    }
+
+clearCart() {
+  if (!this.items.length) {
+    alert("Your shopping cart is already empty");
+    return;
   }
 
-   calculateTotal(){
-    const subTotal = this.items.reduce((total ,item ) => total + item.price, 0);
-  }
-calculateTaxes(amount) {
-   return ((this.taxRate / 100) * amount).toFixed(2);
-  }
+  confirmDiv.style.display = 'block';
+
+  const handleYes = () => {
+    this.items = [];
+    this.total = 0;
+    productsContainer.innerHTML = "";
+    totalNumberOfItems.textContent = 0;
+    cartSubTotal.textContent = 0;
+    cartTaxes.textContent = 0;
+    cartTotal.textContent = 0;
+    confirmDiv.style.display = 'none';
+
+    yesButton.removeEventListener('click', handleYes);
+    noButton.removeEventListener('click', handleNo);
+  };
+
+  const handleNo = () => {
+    confirmDiv.style.display = 'none';
+
+  
+    yesButton.removeEventListener('click', handleYes);
+    noButton.removeEventListener('click', handleNo);
+  };
+
+  yesButton.addEventListener('click', handleYes);
+  noButton.addEventListener('click', handleNo);
+}
+
+
 };
 
 //instantiate a new shopping cart Object
@@ -169,18 +216,21 @@ const cart = new ShoppingCart();
 const addToCartBtns = document.getElementsByClassName("add-to-cart-btn");
 
 [...addToCartBtns].forEach(
-(btn) => {
-btn.addEventListener('click', (event) => {
-    cart.addItem(parseInt(event.target.id), products);
-    totalNumberOfItems.textContent = cart.getCounts();
-})
-});
+    (btn) => {
+        btn.addEventListener('click', (event) => {
+            cart.addItem(parseInt(event.target.id), products);
+            totalNumberOfItems.textContent = cart.getCounts();
+            cart.calculateTotal();
+        })
+    });
 
 cartBtn.addEventListener("click", () => {
-  isCartShowing = !isCartShowing;
-  showHideCartSpan.textContent = isCartShowing ? "Hide" : "Show";
-  cartContainer.style.display = isCartShowing ? "block" : "none"
+    isCartShowing = !isCartShowing;
+    showHideCartSpan.textContent = isCartShowing ? "Hide" : "Show";
+    cartContainer.style.display = isCartShowing ? "block" : "none"
 
 });
+
+clearCartBtn.addEventListener('click', cart.clearCart.bind(cart));
 
 
