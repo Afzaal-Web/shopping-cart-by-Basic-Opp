@@ -158,7 +158,7 @@ class ShoppingCart { //Defining a class (blueprint) to make shopping cart object
     const subTotal = this.items.reduce((total ,item ) => total + item.price, 0);
   }
 calculateTaxes(amount) {
-    return (this.taxRate / 100) * amount;
+   return ((this.taxRate / 100) * amount).toFixed(2);
   }
 };
 
